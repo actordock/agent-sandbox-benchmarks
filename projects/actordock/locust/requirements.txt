@@ -1,0 +1,8 @@
+locust==2.32.7
+grpcio
+prometheus-client
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-prometheus
+protobuf
+grpcio-tools

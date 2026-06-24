@@ -1,0 +1,23 @@
+# Generated / local
+.env
+.env.local
+venv/
+__pycache__/
+*.pyc
+.work/
+results/*.json
+!results/.gitkeep
+
+# Locust outputs
+*.html
+*_stats.csv
+*_stats_history.csv
+*_failures.csv
+*_exceptions.csv
+
+# Proto gen venv
+projects/*/locust/venv/
+
+# Actordock checkout (install.sh)
+projects/actordock/.work/
+projects/actordock/.target_ref

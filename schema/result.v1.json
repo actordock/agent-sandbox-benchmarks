@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/actordock/agent-sandbox-benchmarks/schema/result.v1.json",
+  "title": "AgentSandboxBenchmarkResult",
+  "type": "object",
+  "required": ["schema", "project", "suite", "run", "metrics"],
+  "properties": {
+    "schema": { "const": "result.v1" },
+    "project": { "type": "string" },
+    "suite": { "type": "string" },
+    "target_ref": { "type": "string" },
+    "git_sha": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "env": {
+      "type": "object",
+      "properties": {
+        "runner": { "type": "string" },
+        "cluster": { "type": "string" }
+      }
+    },
+    "run": {
+      "type": "object",
+      "required": ["users", "spawn_rate", "duration_s"],
+      "properties": {
+        "users": { "type": "integer" },
+        "spawn_rate": { "type": "number" },
+        "duration_s": { "type": "integer" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "count": { "type": "integer" },
+          "fail_rate": { "type": "number" },
+          "rps": { "type": "number" },
+          "p50_ms": { "type": "number" },
+          "p95_ms": { "type": "number" },
+          "p99_ms": { "type": "number" },
+          "avg_ms": { "type": "number" }
+        }
+      }
+    }
+  }
+}

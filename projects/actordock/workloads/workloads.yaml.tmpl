@@ -1,0 +1,50 @@
+# Copyright 2026 The Actordock Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: benchmark-workloads
+
+---
+
+apiVersion: actordock.dev/v1alpha1
+kind: WorkerPool
+metadata:
+  name: benchmark-sandbox
+  namespace: benchmark-workloads
+  labels:
+    workload: benchmark-sandbox
+spec:
+  replicas: 1
+  sandboxImage: ko://github.com/actordock/runtime/cmd/runtime-sandbox
+
+---
+
+apiVersion: actordock.dev/v1alpha1
+kind: ActorTemplate
+metadata:
+  name: sleep
+  namespace: benchmark-workloads
+spec:
+  pauseImage: "registry.k8s.io/pause:3.10.2@sha256:f548e0e8e3dc1896ca956272154dde3314e8cc4fde0a57577ee9fa1c63f5baf4"
+  containers:
+  - name: sleep
+    image: busybox@sha256:1487d0af5f52b4ba31c7e465126ee2123fe3f2305d638e7827681e7cf6c83d5e
+    command: ["/bin/sleep", "1000000"]
+  workerSelector:
+    matchLabels:
+      workload: benchmark-sandbox
+  snapshotsConfig:
+    location: gs://${BUCKET_NAME}/benchmark-workloads/sleep/

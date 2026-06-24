@@ -1,0 +1,67 @@
+# Copyright 2026 The Actordock Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: locust-runtime-api
+  namespace: monitoring
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: locust-runtime-api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: locust
+        image: ${LOCUST_IMAGE}
+        args:
+        - "-f"
+        - "/app/tests/runtime_api.py"
+        - "--headless"
+        - "--users"
+        - "${BENCH_USERS}"
+        - "--spawn-rate"
+        - "${BENCH_SPAWN_RATE}"
+        - "--run-time"
+        - "${BENCH_RUN_TIME}"
+        - "--csv"
+        - "/tmp/results"
+        - "--only-summary"
+        ports:
+        - name: metrics
+          containerPort: 8000
+        volumeMounts:
+        - name: servicedns-ca
+          mountPath: /run/servicedns-ca
+          readOnly: true
+        - name: results
+          mountPath: /tmp/results
+      volumes:
+      - name: results
+        emptyDir: {}
+      - name: servicedns-ca
+        projected:
+          sources:
+          - clusterTrustBundle:
+              signerName: servicedns.podcert.actordock.dev/identity
+              labelSelector:
+                matchLabels:
+                  podcert.actordock.dev/canarying: live
+              path: ca.crt
