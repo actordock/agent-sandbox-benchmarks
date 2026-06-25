@@ -45,17 +45,26 @@ fi
 require_cmd git docker kubectl go
 
 mkdir -p "$(dirname "${ACTORDOCK_ROOT}")"
-if [[ ! -d "${ACTORDOCK_ROOT}/.git" ]]; then
+if [[ -f "${ACTORDOCK_ROOT}/hack/install-local.sh" ]]; then
+  log_step "Using pre-checked-out actordock at ${ACTORDOCK_ROOT}"
+elif [[ ! -d "${ACTORDOCK_ROOT}/.git" ]]; then
   log_step "Cloning ${ACTORDOCK_REPO} -> ${ACTORDOCK_ROOT}"
-  git clone "${ACTORDOCK_REPO}" "${ACTORDOCK_ROOT}"
+  CLONE_URL="${ACTORDOCK_REPO}"
+  if [[ -n "${ACTORDOCK_CLONE_TOKEN:-}" ]]; then
+    CLONE_URL="https://x-access-token:${ACTORDOCK_CLONE_TOKEN}@github.com/actordock/actordock.git"
+  fi
+  git clone "${CLONE_URL}" "${ACTORDOCK_ROOT}"
+  log_step "Checking out ${ACTORDOCK_REF}"
+  git -C "${ACTORDOCK_ROOT}" fetch --depth 1 origin "${ACTORDOCK_REF}" 2>/dev/null \
+    || git -C "${ACTORDOCK_ROOT}" fetch --depth 1 origin
+  git -C "${ACTORDOCK_ROOT}" checkout "${ACTORDOCK_REF}"
 else
   log_step "Using existing checkout at ${ACTORDOCK_ROOT}"
+  log_step "Checking out ${ACTORDOCK_REF}"
+  git -C "${ACTORDOCK_ROOT}" fetch --depth 1 origin "${ACTORDOCK_REF}" 2>/dev/null \
+    || git -C "${ACTORDOCK_ROOT}" fetch --depth 1 origin
+  git -C "${ACTORDOCK_ROOT}" checkout "${ACTORDOCK_REF}"
 fi
-
-log_step "Checking out ${ACTORDOCK_REF}"
-git -C "${ACTORDOCK_ROOT}" fetch --depth 1 origin "${ACTORDOCK_REF}" 2>/dev/null \
-  || git -C "${ACTORDOCK_ROOT}" fetch --depth 1 origin
-git -C "${ACTORDOCK_ROOT}" checkout "${ACTORDOCK_REF}"
 
 log_step "Recording target ref"
 git -C "${ACTORDOCK_ROOT}" rev-parse HEAD | tee "${ROOT}/.target_ref"

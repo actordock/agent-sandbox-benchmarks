@@ -15,15 +15,12 @@
 name: benchmark
 
 on:
-  schedule:
-    - cron: "0 4 * * *"
   workflow_dispatch:
     inputs:
       actordock_ref:
         description: actordock git ref to benchmark
         default: main
-  repository_dispatch:
-    types: [actordock-updated]
+        required: true
 
 env:
   ACTORDOCK_REPO: https://github.com/actordock/actordock.git
@@ -37,19 +34,16 @@ jobs:
       matrix:
         suite: [runtime-api, sleep-workload]
     steps:
-      - name: Resolve actordock ref
-        id: ref
-        run: |
-          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
-            echo "ref=${{ github.event.client_payload.ref || 'main' }}" >> "$GITHUB_OUTPUT"
-            echo "sha=${{ github.event.client_payload.sha || '' }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "ref=${{ github.event.inputs.actordock_ref || 'main' }}" >> "$GITHUB_OUTPUT"
-            echo "sha=" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Checkout benchmarks
         uses: actions/checkout@v4
+
+      - name: Checkout actordock
+        uses: actions/checkout@v4
+        with:
+          repository: actordock/actordock
+          ref: ${{ inputs.actordock_ref }}
+          token: ${{ secrets.ACTORDOCK_CLONE_TOKEN }}
+          path: projects/actordock/.work/actordock
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -59,7 +53,8 @@ jobs:
       - name: Install actordock
         run: projects/actordock/install.sh
         env:
-          ACTORDOCK_REF: ${{ steps.ref.outputs.ref }}
+          ACTORDOCK_REF: ${{ inputs.actordock_ref }}
+          ACTORDOCK_ROOT: projects/actordock/.work/actordock
 
       - name: Deploy benchmark dependencies
         run: |
@@ -85,7 +80,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: actordock-${{ matrix.suite }}-${{ steps.ref.outputs.ref }}
+          name: actordock-${{ matrix.suite }}-${{ inputs.actordock_ref }}
           path: results/actordock-${{ matrix.suite }}.json
           if-no-files-found: warn
 
