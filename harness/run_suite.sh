@@ -65,21 +65,28 @@ log_step "Applying Locust job for ${PROJECT}/${SUITE}"
 export LOCUST_IMAGE BENCH_USERS BENCH_SPAWN_RATE BENCH_RUN_TIME
 envsubst < "${JOB_TMPL}" | kubectl apply -f -
 
-log_step "Waiting for job completion"
-kubectl wait --for=condition=complete "job/${JOB_NAME}" -n "${NS}" --timeout=900s
+log_step "Waiting for locust pod"
+kubectl wait --for=condition=Ready "pod" -l "job-name=${JOB_NAME}" -n "${NS}" --timeout=300s
 
 POD="$(kubectl get pods -n "${NS}" -l "job-name=${JOB_NAME}" -o jsonpath='{.items[0].metadata.name}')"
 [[ -n "${POD}" ]] || die "no pod for job ${JOB_NAME}"
 
+DURATION_S="${BENCH_RUN_TIME%s}"
+log_step "Waiting for locust run (${DURATION_S}s) before copying results"
+sleep "$((DURATION_S + 15))"
+
 log_step "Copying Locust CSV from pod ${POD}"
+phase="$(kubectl get pod "${POD}" -n "${NS}" -o jsonpath='{.status.phase}')"
+[[ "${phase}" == "Running" ]] || die "locust pod is ${phase}; expected Running during result copy"
 kubectl cp "${NS}/${POD}:/tmp/results_stats.csv" "${WORKDIR}/results_stats.csv"
+
+log_step "Waiting for job completion"
+kubectl wait --for=condition=complete "job/${JOB_NAME}" -n "${NS}" --timeout=900s
 
 TARGET_REF=""
 if [[ -f "${PDIR}/.target_ref" ]]; then
   TARGET_REF="$(tr -d '[:space:]' < "${PDIR}/.target_ref")"
 fi
-
-DURATION_S="${BENCH_RUN_TIME%s}"
 
 python3 "${BENCH_ROOT}/harness/summarize_locust_csv.py" \
   --project "${PROJECT}" \

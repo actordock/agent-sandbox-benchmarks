@@ -31,19 +31,18 @@ spec:
       containers:
       - name: locust
         image: ${LOCUST_IMAGE}
+        command: ["/bin/sh", "-ec"]
         args:
-        - "-f"
-        - "/app/tests/sleep.py"
-        - "--headless"
-        - "--users"
-        - "${BENCH_USERS}"
-        - "--spawn-rate"
-        - "${BENCH_SPAWN_RATE}"
-        - "--run-time"
-        - "${BENCH_RUN_TIME}"
-        - "--csv"
-        - "/tmp/results"
-        - "--only-summary"
+        - |
+          python3 -m locust \
+            -f "/app/tests/sleep.py" \
+            --headless \
+            --users "${BENCH_USERS}" \
+            --spawn-rate "${BENCH_SPAWN_RATE}" \
+            --run-time "${BENCH_RUN_TIME}" \
+            --csv /tmp/results \
+            --only-summary
+          sleep 120
         ports:
         - name: metrics
           containerPort: 8000

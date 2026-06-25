@@ -20,6 +20,8 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 source "${ROOT}/../../harness/lib/common.sh"
 
 BUCKET_NAME="${BUCKET_NAME:-actordock-snapshots}"
+KO_DOCKER_REPO="${KO_DOCKER_REPO:-localhost:5001}"
+export KO_DOCKER_REPO
 
 usage() {
   cat <<EOF
