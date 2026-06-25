@@ -42,7 +42,6 @@ jobs:
         with:
           repository: actordock/actordock
           ref: ${{ inputs.actordock_ref }}
-          token: ${{ secrets.ACTORDOCK_CLONE_TOKEN }}
           path: projects/actordock/.work/actordock
 
       - name: Setup Go
