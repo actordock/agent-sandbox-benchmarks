@@ -37,7 +37,6 @@ spec:
           python3 -m locust \
             -f "/app/tests/sleep.py" \
             -f "/app/shapes/burst_shape.py" \
-            --shape BurstShape \
             --headless \
             --run-time "${BENCH_RUN_TIME}" \
             --csv /tmp/results \

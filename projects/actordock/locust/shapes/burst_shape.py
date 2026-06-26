@@ -16,6 +16,9 @@ from locust import LoadTestShape
 
 
 class BurstShape(LoadTestShape):
+    # Honor --run-time from headless CI runs.
+    use_common_options = True
+
     # Overall duration for one burst cycle
     cycle_length = 30
     spawn_duration = 10
