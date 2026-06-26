@@ -35,8 +35,7 @@ spec:
         args:
         - |
           python3 -m locust \
-            -f "/app/tests/sleep.py" \
-            -f "/app/shapes/burst_shape.py" \
+            -f "/app/tests/sleep.py,/app/shapes/burst_shape.py" \
             --headless \
             --run-time "${BENCH_RUN_TIME}" \
             --csv /tmp/results \
