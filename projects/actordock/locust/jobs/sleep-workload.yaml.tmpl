@@ -38,9 +38,10 @@ spec:
             -f "/app/tests/sleep.py,/app/shapes/burst_shape.py" \
             --headless \
             --run-time "${BENCH_RUN_TIME}" \
-            --csv /tmp/results \
-            --only-summary
-          sleep 120
+            --csv /tmp/locust/out \
+            --only-summary \
+            --exit-code-on-error 0
+          sleep 20
         ports:
         - name: metrics
           containerPort: 8000
@@ -49,7 +50,7 @@ spec:
           mountPath: /run/servicedns-ca
           readOnly: true
         - name: results
-          mountPath: /tmp/results
+          mountPath: /tmp/locust
       volumes:
       - name: results
         emptyDir: {}

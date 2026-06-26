@@ -28,6 +28,10 @@ class BurstShape(LoadTestShape):
     spawn_rate = 1
 
     def tick(self):
+        opts = self.runner.environment.parsed_options
+        if opts and opts.run_time is not None and self.get_run_time() >= opts.run_time:
+            return None
+
         run_time = self.get_run_time()
         t = run_time % self.cycle_length
 

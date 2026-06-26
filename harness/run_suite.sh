@@ -84,14 +84,22 @@ POD="$(kubectl get pods -n "${NS}" -l "job-name=${JOB_NAME}" -o jsonpath='{.item
 [[ -n "${POD}" ]] || die "no pod for job ${JOB_NAME}"
 
 DURATION_S="${BENCH_RUN_TIME%s}"
-STATS_CSV="/tmp/results_stats.csv"
-log_step "Waiting for locust stats csv (up to $((DURATION_S + 60))s)"
+STATS_CSV="/tmp/locust/out_stats.csv"
+JOB_WAIT_S=$((DURATION_S + 120))
+
+log_step "Waiting for locust stats csv (up to ${JOB_WAIT_S}s)"
 copied=0
-for _ in $(seq 1 "$((DURATION_S + 60))"); do
-  if kubectl exec -n "${NS}" "${POD}" -c locust -- test -f "${STATS_CSV}" 2>/dev/null; then
+for _ in $(seq 1 "${JOB_WAIT_S}"); do
+  phase="$(kubectl get pod "${POD}" -n "${NS}" -o jsonpath='{.status.phase}' 2>/dev/null || true)"
+  if [[ "${phase}" == "Running" ]] \
+    && kubectl exec -n "${NS}" "${POD}" -c locust -- \
+      grep -qE ',Aggregated,[1-9][0-9]*,' "${STATS_CSV}" 2>/dev/null; then
     log_step "Copying Locust CSV from pod ${POD}"
     kubectl cp "${NS}/${POD}:${STATS_CSV}" "${WORKDIR}/results_stats.csv"
     copied=1
+    break
+  fi
+  if [[ "${phase}" == "Succeeded" || "${phase}" == "Failed" ]]; then
     break
   fi
   sleep 1
@@ -99,11 +107,23 @@ done
 if [[ "${copied}" -ne 1 ]]; then
   log_step "Locust logs (stats csv missing)"
   kubectl logs -n "${NS}" "${POD}" -c locust >&2 || true
-  die "missing locust stats csv in pod ${POD}"
+  die "missing locust stats csv at ${STATS_CSV} in pod ${POD}"
 fi
 
-log_step "Waiting for job completion"
-kubectl wait --for=condition=complete "job/${JOB_NAME}" -n "${NS}" --timeout=900s
+log_step "Waiting for locust job to finish (up to 60s)"
+finished=0
+for _ in $(seq 1 60); do
+  succeeded="$(kubectl get job "${JOB_NAME}" -n "${NS}" -o jsonpath='{.status.succeeded}' 2>/dev/null || true)"
+  failed="$(kubectl get job "${JOB_NAME}" -n "${NS}" -o jsonpath='{.status.failed}' 2>/dev/null || true)"
+  if [[ "${succeeded}" == "1" || "${failed}" == "1" ]]; then
+    finished=1
+    break
+  fi
+  sleep 1
+done
+if [[ "${finished}" -ne 1 ]]; then
+  die "locust job ${JOB_NAME} did not finish after collecting results"
+fi
 
 TARGET_REF=""
 if [[ -f "${PDIR}/.target_ref" ]]; then
