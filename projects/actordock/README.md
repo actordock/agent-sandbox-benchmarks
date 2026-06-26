@@ -15,11 +15,9 @@ Locust load tests against the Actordock runtime control plane (adapted from Subs
 | `ACTORDOCK_REF` | `main` |
 | `BUCKET_NAME` | `actordock-snapshots` |
 | `LOCUST_IMAGE` | `localhost:5001/locust-actordock:latest` |
-| `BENCH_USERS` | `3` (Substrate `BurstShape` peak) |
-| `BENCH_SPAWN_RATE` | `1` |
-| `BENCH_RUN_TIME` | `60s` |
+| `BENCH_RUN_TIME` | `90s` (sleep-workload), `60s` (runtime-api) |
 
 ## Suites
 
-- **runtime-api** — uses `actordock/base` ActorTemplate; no extra workloads.
-- **sleep-workload** — deploy with `deploy-deps.sh --workloads`.
+- **runtime-api** — headless `runtime_api.py` (Substrate `ate-api` style).
+- **sleep-workload** — `sleep.py` with `BurstShape`; deploy with `deploy-deps.sh --workloads`.

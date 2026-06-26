@@ -29,9 +29,8 @@ Usage: $0 <project> <suite>
 Example: $0 actordock runtime-api
 
 Environment:
-  BENCH_USERS        (default: 3, matches Substrate burst peak)
-  BENCH_SPAWN_RATE   (default: 1)
-  BENCH_RUN_TIME     (default: 60s)
+  BENCH_RUN_TIME     sleep-workload default: 90s (3x BurstShape cycles)
+                     runtime-api default: 60s
   LOCUST_IMAGE       (default: localhost:5001/locust-actordock:latest)
 EOF
 }
@@ -45,10 +44,23 @@ PDIR="$(project_dir "${PROJECT}")"
 JOB_TMPL="${PDIR}/locust/jobs/${SUITE}.yaml.tmpl"
 [[ -f "${JOB_TMPL}" ]] || die "missing job template: ${JOB_TMPL}"
 
-BENCH_USERS="${BENCH_USERS:-3}"
-BENCH_SPAWN_RATE="${BENCH_SPAWN_RATE:-1}"
-BENCH_RUN_TIME="${BENCH_RUN_TIME:-60s}"
 LOCUST_IMAGE="${LOCUST_IMAGE:-localhost:5001/locust-actordock:latest}"
+SUMMARY_USERS=0
+SUMMARY_SPAWN=0
+case "${SUITE}" in
+  sleep-workload)
+    BENCH_RUN_TIME="${BENCH_RUN_TIME:-90s}"
+    SUMMARY_USERS=3
+    SUMMARY_SPAWN=1
+    ;;
+  runtime-api)
+    BENCH_RUN_TIME="${BENCH_RUN_TIME:-60s}"
+    ;;
+  *)
+    BENCH_RUN_TIME="${BENCH_RUN_TIME:-60s}"
+    ;;
+esac
+
 JOB_NAME="locust-${SUITE}"
 NS="monitoring"
 WORKDIR="${BENCH_ROOT}/.work/run-${PROJECT}-${SUITE}"
@@ -62,7 +74,7 @@ log_step "Deleting prior job ${JOB_NAME} if any"
 kubectl delete job "${JOB_NAME}" -n "${NS}" --ignore-not-found --wait=true
 
 log_step "Applying Locust job for ${PROJECT}/${SUITE}"
-export LOCUST_IMAGE BENCH_USERS BENCH_SPAWN_RATE BENCH_RUN_TIME
+export LOCUST_IMAGE BENCH_RUN_TIME
 envsubst < "${JOB_TMPL}" | kubectl apply -f -
 
 log_step "Waiting for locust pod"
@@ -94,8 +106,8 @@ python3 "${BENCH_ROOT}/harness/summarize_locust_csv.py" \
   --stats-csv "${WORKDIR}/results_stats.csv" \
   --out "${OUT_JSON}" \
   --target-ref "${TARGET_REF}" \
-  --users "${BENCH_USERS}" \
-  --spawn-rate "${BENCH_SPAWN_RATE}" \
+  --users "${SUMMARY_USERS}" \
+  --spawn-rate "${SUMMARY_SPAWN}" \
   --duration-s "${DURATION_S}"
 
 log_step "Done: ${OUT_JSON}"

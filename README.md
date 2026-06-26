@@ -29,8 +29,8 @@ Results are written to `results/actordock-runtime-api.json`.
 
 | Suite | Measures |
 |-------|----------|
-| `runtime-api` | gRPC GetActor / ResumeActor / SuspendActor |
-| `sleep-workload` | Suspend / Resume on busybox sleep template |
+| `runtime-api` | gRPC GetActor / ResumeActor / SuspendActor (`ate-api` style) |
+| `sleep-workload` | Suspend / Resume on busybox sleep template (`BurstShape` load) |
 
 ## CI
 

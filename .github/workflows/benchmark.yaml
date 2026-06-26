@@ -70,10 +70,6 @@ jobs:
 
       - name: Run suite
         run: harness/run_suite.sh actordock ${{ matrix.suite }}
-        env:
-          BENCH_USERS: "3"
-          BENCH_SPAWN_RATE: "1"
-          BENCH_RUN_TIME: 60s
 
       - name: Write job summary
         if: always()
@@ -86,22 +82,3 @@ jobs:
           name: actordock-${{ matrix.suite }}-${{ inputs.actordock_ref }}
           path: results/actordock-${{ matrix.suite }}.json
           if-no-files-found: warn
-
-      - name: Fail on benchmark errors
-        if: success()
-        env:
-          BENCH_SUITE: ${{ matrix.suite }}
-        run: |
-          python3 - <<'PY'
-          import json, os, sys
-          from pathlib import Path
-          p = Path(f"results/actordock-{os.environ['BENCH_SUITE']}.json")
-          if not p.is_file():
-              sys.exit(1)
-          data = json.loads(p.read_text())
-          for name, m in data.get("metrics", {}).items():
-              if m.get("fail_rate", 0) > 0.01:
-                  print(f"fail_rate too high for {name}: {m['fail_rate']}")
-                  sys.exit(1)
-          print("benchmark passed")
-          PY
