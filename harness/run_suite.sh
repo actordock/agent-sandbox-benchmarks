@@ -29,8 +29,8 @@ Usage: $0 <project> <suite>
 Example: $0 actordock runtime-api
 
 Environment:
-  BENCH_USERS        (default: 5)
-  BENCH_SPAWN_RATE   (default: 5)
+  BENCH_USERS        (default: 3, matches Substrate burst peak)
+  BENCH_SPAWN_RATE   (default: 1)
   BENCH_RUN_TIME     (default: 60s)
   LOCUST_IMAGE       (default: localhost:5001/locust-actordock:latest)
 EOF
@@ -45,8 +45,8 @@ PDIR="$(project_dir "${PROJECT}")"
 JOB_TMPL="${PDIR}/locust/jobs/${SUITE}.yaml.tmpl"
 [[ -f "${JOB_TMPL}" ]] || die "missing job template: ${JOB_TMPL}"
 
-BENCH_USERS="${BENCH_USERS:-5}"
-BENCH_SPAWN_RATE="${BENCH_SPAWN_RATE:-5}"
+BENCH_USERS="${BENCH_USERS:-3}"
+BENCH_SPAWN_RATE="${BENCH_SPAWN_RATE:-1}"
 BENCH_RUN_TIME="${BENCH_RUN_TIME:-60s}"
 LOCUST_IMAGE="${LOCUST_IMAGE:-localhost:5001/locust-actordock:latest}"
 JOB_NAME="locust-${SUITE}"

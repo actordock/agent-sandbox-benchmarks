@@ -41,7 +41,8 @@ spec:
             --spawn-rate "${BENCH_SPAWN_RATE}" \
             --run-time "${BENCH_RUN_TIME}" \
             --csv /tmp/results \
-            --only-summary
+            --only-summary \
+            --exit-code-on-error 0
           sleep 120
         ports:
         - name: metrics

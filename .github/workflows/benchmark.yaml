@@ -70,6 +70,10 @@ jobs:
 
       - name: Run suite
         run: harness/run_suite.sh actordock ${{ matrix.suite }}
+        env:
+          BENCH_USERS: "3"
+          BENCH_SPAWN_RATE: "1"
+          BENCH_RUN_TIME: 60s
 
       - name: Write job summary
         if: always()

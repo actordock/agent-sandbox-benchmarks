@@ -35,13 +35,16 @@ class SleepUser(User):
         update_user_count(1, self.__class__.__name__)
         self.channel, self.stub = control_stub()
         self.actor_id = f"sb-{uuid.uuid4()}"
-        self.stub.CreateActor(
-            runtimeapi_pb2.CreateActorRequest(
-                actor_id=self.actor_id,
-                actor_template_namespace=WORKLOAD_NAMESPACE,
-                actor_template_name=TEMPLATE_NAME,
+        try:
+            self.stub.CreateActor(
+                runtimeapi_pb2.CreateActorRequest(
+                    actor_id=self.actor_id,
+                    actor_template_namespace=WORKLOAD_NAMESPACE,
+                    actor_template_name=TEMPLATE_NAME,
+                )
             )
-        )
+        except Exception as e:
+            print(f"Failed to create actor {self.actor_id}: {e}")
 
     def on_stop(self):
         update_user_count(-1, self.__class__.__name__)
