@@ -21,7 +21,11 @@ import uuid
 from common import runtimeapi_pb2
 from common.grpc_client import control_stub
 from harness.lib.driver import SandboxDriver, SandboxHandle
-from projects.actordock.driver.envd_exec import exec_command
+from projects.actordock.driver.envd_exec import (
+    actor_backend,
+    exec_command_at_backend,
+    wait_envd_ready,
+)
 
 TEMPLATE_NAMESPACE = os.environ.get("BENCH_TEMPLATE_NAMESPACE", "actordock")
 TEMPLATE_NAME = os.environ.get("BENCH_TEMPLATE_NAME", "base")
@@ -57,9 +61,15 @@ class ActordockGrpcDriver(SandboxDriver):
             runtimeapi_pb2.ResumeActorRequest(actor_id=handle.sandbox_id)
         )
         self._wait_for_status(handle.sandbox_id, _STATUS_RUNNING)
+        actor = self._get_actor(handle.sandbox_id)
+        wait_envd_ready(actor_backend(actor.sandbox_pod_ip))
 
     def exec_command(self, handle: SandboxHandle, command: str) -> str:
-        return exec_command(handle.sandbox_id, command)
+        actor = self._get_actor(handle.sandbox_id)
+        return exec_command_at_backend(
+            actor_backend(actor.sandbox_pod_ip),
+            command,
+        )
 
     def suspend(self, handle: SandboxHandle) -> None:
         self._stub.SuspendActor(
