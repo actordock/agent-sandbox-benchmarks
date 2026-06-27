@@ -3,7 +3,7 @@
   "project": "actordock",
   "suite": "agent-loop",
   "target_ref": "49ff499cb34856be3c32ca686df633be3efb13b3",
-  "timestamp": "2026-06-27T03:10:28.883042+00:00",
+  "timestamp": "2026-06-27T03:26:09.871363+00:00",
   "env": {
     "runner": "harness",
     "cluster": "kind"
@@ -17,11 +17,11 @@
     "CreateSandbox": {
       "count": 1,
       "fail_rate": 0.0,
-      "rps": 7.4653,
-      "avg_ms": 10.73,
-      "p50_ms": 10.73,
-      "p95_ms": 11.0,
-      "p99_ms": 11.0
+      "rps": 7.4412,
+      "avg_ms": 19.15,
+      "p50_ms": 19.15,
+      "p95_ms": 19.0,
+      "p99_ms": 19.0
     }
   }
 }

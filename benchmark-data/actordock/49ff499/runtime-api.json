@@ -3,7 +3,7 @@
   "project": "actordock",
   "suite": "runtime-api",
   "target_ref": "49ff499cb34856be3c32ca686df633be3efb13b3",
-  "timestamp": "2026-06-27T03:09:03.319353+00:00",
+  "timestamp": "2026-06-27T03:25:24.410291+00:00",
   "env": {
     "runner": "harness",
     "cluster": "kind"
@@ -15,31 +15,31 @@
   },
   "metrics": {
     "GetActor": {
-      "count": 82,
+      "count": 93,
       "fail_rate": 0.0,
-      "rps": 1.3642,
-      "avg_ms": 1.05,
-      "p50_ms": 1.05,
-      "p95_ms": 1.0,
-      "p99_ms": 2.0
+      "rps": 1.5495,
+      "avg_ms": 1.25,
+      "p50_ms": 1.25,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0
     },
     "ResumeActor": {
-      "count": 82,
+      "count": 93,
       "fail_rate": 0.0,
-      "rps": 1.3642,
-      "avg_ms": 267.49,
-      "p50_ms": 267.49,
-      "p95_ms": 420.0,
-      "p99_ms": 660.0
+      "rps": 1.5495,
+      "avg_ms": 244.43,
+      "p50_ms": 244.43,
+      "p95_ms": 270.0,
+      "p99_ms": 300.0
     },
     "SuspendActor": {
-      "count": 82,
+      "count": 93,
       "fail_rate": 0.0,
-      "rps": 1.3642,
-      "avg_ms": 195.26,
-      "p50_ms": 195.26,
-      "p95_ms": 300.0,
-      "p99_ms": 490.0
+      "rps": 1.5495,
+      "avg_ms": 140.2,
+      "p50_ms": 140.2,
+      "p95_ms": 150.0,
+      "p99_ms": 180.0
     }
   }
 }

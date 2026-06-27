@@ -3,7 +3,7 @@
   "project": "actordock",
   "suite": "sleep-workload",
   "target_ref": "49ff499cb34856be3c32ca686df633be3efb13b3",
-  "timestamp": "2026-06-27T03:10:52.534399+00:00",
+  "timestamp": "2026-06-27T03:27:12.461670+00:00",
   "env": {
     "runner": "harness",
     "cluster": "kind"
@@ -15,22 +15,22 @@
   },
   "metrics": {
     "ResumeActor": {
-      "count": 179,
-      "fail_rate": 0.653631,
-      "rps": 1.9903,
-      "avg_ms": 80.32,
-      "p50_ms": 80.32,
-      "p95_ms": 240.0,
-      "p99_ms": 260.0
+      "count": 176,
+      "fail_rate": 0.653409,
+      "rps": 1.9449,
+      "avg_ms": 85.71,
+      "p50_ms": 85.71,
+      "p95_ms": 260.0,
+      "p99_ms": 290.0
     },
     "SuspendActor": {
       "count": 181,
       "fail_rate": 0.0,
-      "rps": 2.0125,
-      "avg_ms": 40.27,
-      "p50_ms": 40.27,
-      "p95_ms": 120.0,
-      "p99_ms": 130.0
+      "rps": 2.0002,
+      "avg_ms": 41.16,
+      "p50_ms": 41.16,
+      "p95_ms": 130.0,
+      "p99_ms": 140.0
     }
   }
 }
