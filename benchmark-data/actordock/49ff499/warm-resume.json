@@ -1,0 +1,27 @@
+{
+  "schema": "result.v1",
+  "project": "actordock",
+  "suite": "warm-resume",
+  "target_ref": "49ff499cb34856be3c32ca686df633be3efb13b3",
+  "timestamp": "2026-06-26T16:39:44.795762+00:00",
+  "env": {
+    "runner": "harness",
+    "cluster": "kind"
+  },
+  "run": {
+    "users": 1,
+    "spawn_rate": 1.0,
+    "duration_s": 30
+  },
+  "metrics": {
+    "WarmResume": {
+      "count": 22,
+      "fail_rate": 0.0,
+      "rps": 0.7337,
+      "avg_ms": 566.5,
+      "p50_ms": 566.5,
+      "p95_ms": 670.0,
+      "p99_ms": 1100.0
+    }
+  }
+}

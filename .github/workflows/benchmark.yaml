@@ -87,3 +87,38 @@ jobs:
           name: actordock-${{ matrix.suite }}-${{ inputs.actordock_ref }}
           path: results/actordock-${{ matrix.suite }}.json
           if-no-files-found: warn
+
+  publish-data:
+    needs: actordock
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout benchmarks
+        uses: actions/checkout@v4
+
+      - name: Download suite artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Collect results
+        run: harness/collect_artifact_results.sh artifacts
+
+      - name: Update benchmark-data
+        run: harness/update_benchmark_data.sh actordock
+
+      - name: Commit benchmark-data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add benchmark-data/
+          if git diff --staged --quiet; then
+            echo "No benchmark-data changes to commit."
+            exit 0
+          fi
+          git commit -m "benchmark-data: publish actordock results (${{ inputs.actordock_ref }})"
+          git push

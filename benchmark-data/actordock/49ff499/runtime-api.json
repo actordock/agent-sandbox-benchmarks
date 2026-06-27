@@ -1,0 +1,45 @@
+{
+  "schema": "result.v1",
+  "project": "actordock",
+  "suite": "runtime-api",
+  "target_ref": "49ff499cb34856be3c32ca686df633be3efb13b3",
+  "timestamp": "2026-06-26T16:41:33.443617+00:00",
+  "env": {
+    "runner": "harness",
+    "cluster": "kind"
+  },
+  "run": {
+    "users": 0,
+    "spawn_rate": 0.0,
+    "duration_s": 30
+  },
+  "metrics": {
+    "GetActor": {
+      "count": 38,
+      "fail_rate": 0.0,
+      "rps": 1.2931,
+      "avg_ms": 2.22,
+      "p50_ms": 2.22,
+      "p95_ms": 4.0,
+      "p99_ms": 7.0
+    },
+    "ResumeActor": {
+      "count": 38,
+      "fail_rate": 0.0,
+      "rps": 1.2931,
+      "avg_ms": 328.74,
+      "p50_ms": 328.74,
+      "p95_ms": 410.0,
+      "p99_ms": 410.0
+    },
+    "SuspendActor": {
+      "count": 38,
+      "fail_rate": 0.0,
+      "rps": 1.2931,
+      "avg_ms": 187.0,
+      "p50_ms": 187.0,
+      "p95_ms": 230.0,
+      "p99_ms": 230.0
+    }
+  }
+}

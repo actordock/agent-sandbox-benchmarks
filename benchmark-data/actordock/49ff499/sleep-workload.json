@@ -1,0 +1,36 @@
+{
+  "schema": "result.v1",
+  "project": "actordock",
+  "suite": "sleep-workload",
+  "target_ref": "",
+  "timestamp": "2026-06-26T16:23:27.447464+00:00",
+  "env": {
+    "runner": "harness",
+    "cluster": "kind"
+  },
+  "run": {
+    "users": 3,
+    "spawn_rate": 1.0,
+    "duration_s": 30
+  },
+  "metrics": {
+    "ResumeActor": {
+      "count": 69,
+      "fail_rate": 1.0,
+      "rps": 2.3065,
+      "avg_ms": 1.86,
+      "p50_ms": 1.86,
+      "p95_ms": 8.0,
+      "p99_ms": 11.0
+    },
+    "SuspendActor": {
+      "count": 69,
+      "fail_rate": 1.0,
+      "rps": 2.3065,
+      "avg_ms": 1.45,
+      "p50_ms": 1.45,
+      "p95_ms": 2.0,
+      "p99_ms": 5.0
+    }
+  }
+}

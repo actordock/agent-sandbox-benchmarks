@@ -1,0 +1,36 @@
+{
+  "schema": "result.v1",
+  "project": "actordock",
+  "suite": "cold-start",
+  "target_ref": "49ff499cb34856be3c32ca686df633be3efb13b3",
+  "timestamp": "2026-06-26T16:38:50.659519+00:00",
+  "env": {
+    "runner": "harness",
+    "cluster": "kind"
+  },
+  "run": {
+    "users": 1,
+    "spawn_rate": 1.0,
+    "duration_s": 30
+  },
+  "metrics": {
+    "CreateSandbox": {
+      "count": 24,
+      "fail_rate": 0.0,
+      "rps": 0.8134,
+      "avg_ms": 4.46,
+      "p50_ms": 4.46,
+      "p95_ms": 8.0,
+      "p99_ms": 13.0
+    },
+    "WaitReady": {
+      "count": 24,
+      "fail_rate": 0.0,
+      "rps": 0.8134,
+      "avg_ms": 355.74,
+      "p50_ms": 355.74,
+      "p95_ms": 550.0,
+      "p99_ms": 710.0
+    }
+  }
+}

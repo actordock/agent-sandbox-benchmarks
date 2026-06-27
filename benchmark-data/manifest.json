@@ -1,0 +1,32 @@
+{
+  "schema": "benchmark-manifest.v1",
+  "suite_groups": {
+    "shared": [
+      "cold-start",
+      "warm-resume",
+      "agent-loop"
+    ],
+    "private": {
+      "actordock": [
+        "runtime-api",
+        "sleep-workload"
+      ]
+    }
+  },
+  "projects": [
+    {
+      "id": "actordock",
+      "name": "Actordock",
+      "description": "",
+      "runs": [
+        {
+          "id": "49ff499",
+          "label": "49ff499",
+          "target_ref": "49ff499cb34856be3c32ca686df633be3efb13b3",
+          "recorded_at": "2026-06-26T16:38:50.659519+00:00",
+          "base_path": "actordock/49ff499"
+        }
+      ]
+    }
+  ]
+}

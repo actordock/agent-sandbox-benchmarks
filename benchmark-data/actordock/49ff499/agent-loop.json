@@ -1,0 +1,54 @@
+{
+  "schema": "result.v1",
+  "project": "actordock",
+  "suite": "agent-loop",
+  "target_ref": "49ff499cb34856be3c32ca686df633be3efb13b3",
+  "timestamp": "2026-06-26T16:40:38.934750+00:00",
+  "env": {
+    "runner": "harness",
+    "cluster": "kind"
+  },
+  "run": {
+    "users": 1,
+    "spawn_rate": 1.0,
+    "duration_s": 30
+  },
+  "metrics": {
+    "AgentLoopTotal": {
+      "count": 22,
+      "fail_rate": 1.0,
+      "rps": 0.7475,
+      "avg_ms": 546.84,
+      "p50_ms": 546.84,
+      "p95_ms": 620.0,
+      "p99_ms": 1100.0
+    },
+    "CreateSandbox": {
+      "count": 23,
+      "fail_rate": 0.0,
+      "rps": 0.7814,
+      "avg_ms": 4.1,
+      "p50_ms": 4.1,
+      "p95_ms": 9.0,
+      "p99_ms": 10.0
+    },
+    "ExecCommand": {
+      "count": 22,
+      "fail_rate": 1.0,
+      "rps": 0.7475,
+      "avg_ms": 9.97,
+      "p50_ms": 9.97,
+      "p95_ms": 25.0,
+      "p99_ms": 47.0
+    },
+    "WaitReady": {
+      "count": 23,
+      "fail_rate": 0.0,
+      "rps": 0.7814,
+      "avg_ms": 345.79,
+      "p50_ms": 345.79,
+      "p95_ms": 360.0,
+      "p99_ms": 840.0
+    }
+  }
+}
