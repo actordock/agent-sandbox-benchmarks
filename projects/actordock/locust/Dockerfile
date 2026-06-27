@@ -14,15 +14,20 @@
 
 FROM python:3.11-slim AS builder
 WORKDIR /app
-COPY requirements.txt .
+COPY projects/actordock/locust/requirements.txt .
 RUN pip install --no-cache-dir --target=/app/deps -r requirements.txt
 
 FROM python:3.11-slim
 WORKDIR /app
 COPY --from=builder /app/deps /app/deps
-COPY common/ /app/common/
-COPY shapes/ /app/shapes/
-COPY tests/ /app/tests/
+COPY harness/lib/ /app/harness/lib/
+COPY suites/ /app/suites/
+COPY projects/__init__.py /app/projects/
+COPY projects/actordock/__init__.py /app/projects/actordock/
+COPY projects/actordock/driver/ /app/projects/actordock/driver/
+COPY projects/actordock/locust/common/ /app/common/
+COPY projects/actordock/locust/tests/ /app/tests/
+COPY projects/actordock/locust/shapes/ /app/shapes/
 ENV PYTHONPATH=/app:/app/deps
 ENV PYTHONUNBUFFERED=1
 ENTRYPOINT ["python3", "-m", "locust"]

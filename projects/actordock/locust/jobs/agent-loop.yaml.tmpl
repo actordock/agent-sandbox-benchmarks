@@ -15,14 +15,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: locust-sleep-workload
+  name: locust-agent-loop
   namespace: monitoring
 spec:
   backoffLimit: 0
   template:
     metadata:
       labels:
-        app: locust-sleep-workload
+        app: locust-agent-loop
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
@@ -36,13 +36,26 @@ spec:
         args:
         - |
           python3 -m locust \
-            -f "/app/tests/sleep.py,/app/shapes/burst_shape.py" \
+            -f "/app/suites/agent-loop/locust_test.py" \
             --headless \
+            --users 1 \
+            --spawn-rate 1 \
             --run-time "${BENCH_RUN_TIME}" \
             --csv /tmp/locust/out \
             --only-summary \
             --exit-code-on-error 0
           sleep 20
+        env:
+        - name: BENCH_DRIVER_MODULE
+          value: projects.actordock.driver.grpc
+        - name: BENCH_TEMPLATE_NAMESPACE
+          value: actordock
+        - name: BENCH_TEMPLATE_NAME
+          value: base
+        - name: BENCH_ROUTER_ADDR
+          value: router.actordock.svc.cluster.local:8081
+        - name: BENCH_EXEC_COMMAND
+          value: echo ok
         ports:
         - name: metrics
           containerPort: 8000

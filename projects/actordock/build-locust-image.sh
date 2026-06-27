@@ -32,8 +32,10 @@ if [[ -x "${ROOT}/generate_protos.sh" ]]; then
   fi
 fi
 
+BENCH_ROOT="$(cd "${ROOT}/../.." && pwd)"
+
 log_step "Building ${LOCUST_IMAGE}"
-docker build -t "${LOCUST_IMAGE}" -f "${ROOT}/locust/Dockerfile" "${ROOT}/locust/"
+docker build -t "${LOCUST_IMAGE}" -f "${ROOT}/locust/Dockerfile" "${BENCH_ROOT}"
 
 log_step "Pushing to registry"
 docker push "${LOCUST_IMAGE}"

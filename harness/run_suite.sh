@@ -26,11 +26,16 @@ usage() {
   cat <<EOF
 Usage: $0 <project> <suite>
 
-Example: $0 actordock runtime-api
+Shared suites (cross-project):
+  cold-start, warm-resume, agent-loop
+
+Actordock-private suites:
+  runtime-api, sleep-workload
+
+Example: $0 actordock cold-start
 
 Environment:
-  BENCH_RUN_TIME     sleep-workload default: 90s (3x BurstShape cycles)
-                     runtime-api default: 60s
+  BENCH_RUN_TIME     suite-specific default duration
   LOCUST_IMAGE       (default: localhost:5001/locust-actordock:latest)
 EOF
 }
@@ -44,6 +49,13 @@ PDIR="$(project_dir "${PROJECT}")"
 JOB_TMPL="${PDIR}/locust/jobs/${SUITE}.yaml.tmpl"
 [[ -f "${JOB_TMPL}" ]] || die "missing job template: ${JOB_TMPL}"
 
+SHARED_SUITE="${BENCH_ROOT}/suites/${SUITE}/locust_test.py"
+if [[ -f "${SHARED_SUITE}" ]]; then
+  SUITE_KIND="shared"
+else
+  SUITE_KIND="private"
+fi
+
 LOCUST_IMAGE="${LOCUST_IMAGE:-localhost:5001/locust-actordock:latest}"
 SUMMARY_USERS=0
 SUMMARY_SPAWN=0
@@ -51,6 +63,16 @@ case "${SUITE}" in
   sleep-workload)
     BENCH_RUN_TIME="${BENCH_RUN_TIME:-90s}"
     SUMMARY_USERS=3
+    SUMMARY_SPAWN=1
+    ;;
+  cold-start|warm-resume)
+    BENCH_RUN_TIME="${BENCH_RUN_TIME:-60s}"
+    SUMMARY_USERS=1
+    SUMMARY_SPAWN=1
+    ;;
+  agent-loop)
+    BENCH_RUN_TIME="${BENCH_RUN_TIME:-90s}"
+    SUMMARY_USERS=1
     SUMMARY_SPAWN=1
     ;;
   runtime-api)
@@ -70,6 +92,7 @@ require_cmd kubectl python3 envsubst
 
 mkdir -p "${WORKDIR}" "${BENCH_ROOT}/results"
 
+log_step "Running ${SUITE_KIND} suite ${PROJECT}/${SUITE}"
 log_step "Deleting prior job ${JOB_NAME} if any"
 kubectl delete job "${JOB_NAME}" -n "${NS}" --ignore-not-found --wait=true
 
@@ -85,9 +108,9 @@ POD="$(kubectl get pods -n "${NS}" -l "job-name=${JOB_NAME}" -o jsonpath='{.item
 
 DURATION_S="${BENCH_RUN_TIME%s}"
 case "${SUITE}" in
-  sleep-workload) STATS_CSV="/tmp/locust/out_stats.csv" ;;
+  sleep-workload|cold-start|warm-resume|agent-loop) STATS_CSV="/tmp/locust/out_stats.csv" ;;
   runtime-api) STATS_CSV="/tmp/results_stats.csv" ;;
-  *) STATS_CSV="/tmp/results_stats.csv" ;;
+  *) STATS_CSV="/tmp/locust/out_stats.csv" ;;
 esac
 JOB_WAIT_S=$((DURATION_S + 120))
 COLLECT_AFTER_S=$((DURATION_S + 5))

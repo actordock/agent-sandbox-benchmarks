@@ -32,7 +32,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [runtime-api, sleep-workload]
+        suite:
+          - cold-start
+          - warm-resume
+          - agent-loop
+          - runtime-api
+          - sleep-workload
     steps:
       - name: Checkout benchmarks
         uses: actions/checkout@v4

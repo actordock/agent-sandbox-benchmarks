@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Actordock-private benchmark: steady-state runtime-api control plane RPCs.
+
 from locust import User, task, events
 import time
 import uuid

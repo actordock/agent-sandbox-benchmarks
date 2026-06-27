@@ -1,5 +1,6 @@
 locust==2.32.7
 grpcio
+httpx[http2]
 prometheus-client
 opentelemetry-api
 opentelemetry-sdk
